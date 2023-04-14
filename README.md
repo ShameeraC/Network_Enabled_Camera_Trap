@@ -1,2 +1,4 @@
-# Network_Enabled_Camera_Trap
-This repository contains the working documentation and code for a network enables camera trap designed by group 9 for the EEE4113F design course at the University of Cape Town
+# Network-Enabled Camera Trap
+This project deals with improving exisitng research equipment for ornithologists. One of the major concerns faced by researchers studying eagles in the Kalahari includes the inability to confirm whether camera traps are working once they are set up in a tree. He also has no way of telling if the camera trap has moved from its set position due to issues with mounting. They also cannot confirm whether the camera is positioned correctly or that it is on. This means that months of research can be missed due to simple errors.
+
+This repository details the design, testing, documentation and implementation of a network-enabled camera trap aimed at solving these problems completed by [Shameera Cassim](https://github.com/ShameeraC), [Thato Khoabane](https://github.com/), [Litha Nohashe](https://github.com/) and [Stefan Friedrich](https://github.com/).
