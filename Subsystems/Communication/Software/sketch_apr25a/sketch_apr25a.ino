@@ -25,8 +25,8 @@
 #include <FS.h>
 
 // Replace with your network credentials
-const char* ssid = "Shams iPhone";
-const char* password = "123456sc";
+const char* ssid = "SnackAttack";
+const char* password = "0794404715";
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
@@ -35,6 +35,7 @@ boolean takeNewPhoto = false;
 
 // Photo File Name to save in SPIFFS
 #define FILE_PHOTO "/photo.jpg"
+#define FILE_PHOTO2 "/photo2.jpg"
 
 // OV2640 camera module pins (CAMERA_MODEL_AI_THINKER)
 #define PWDN_GPIO_NUM     32
@@ -71,14 +72,21 @@ const char index_html[] PROGMEM = R"rawliteral(
     <p>
       <button onclick="rotatePhoto();">ROTATE</button>
       <button onclick="capturePhoto()">CAPTURE PHOTO</button>
+      <button onclick="capturePhoto2()">CAPTURE PHOTO2</button>
       <button onclick="location.reload();">REFRESH PAGE</button>
     </p>
   </div>
   <div><img src="saved-photo" id="photo" width="70%"></div>
+  <div><img src="saved-photo2" id="photo2" width="70%"></div>
 </body>
 <script>
   var deg = 0;
   function capturePhoto() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', "/capture", true);
+    xhr.send();
+  }
+  function capturePhoto2() {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "/capture", true);
     xhr.send();
@@ -172,6 +180,9 @@ void setup() {
   server.on("/saved-photo", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, FILE_PHOTO, "image/jpg", false);
   });
+  server.on("/saved-photo2", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, FILE_PHOTO2, "image2/jpg", false);
+  });
 
   // Start server
   server.begin();
@@ -189,6 +200,11 @@ void loop() {
 // Check if photo capture was successful
 bool checkPhoto( fs::FS &fs ) {
   File f_pic = fs.open( FILE_PHOTO );
+  unsigned int pic_sz = f_pic.size();
+  return ( pic_sz > 100 );
+}
+bool checkPhoto2( fs::FS &fs ) {
+  File f_pic = fs.open( FILE_PHOTO2 );
   unsigned int pic_sz = f_pic.size();
   return ( pic_sz > 100 );
 }
@@ -211,15 +227,18 @@ void capturePhotoSaveSpiffs( void ) {
     // Photo file name
     Serial.printf("Picture file name: %s\n", FILE_PHOTO);
     File file = SPIFFS.open(FILE_PHOTO, FILE_WRITE);
+    Serial.printf("Picture file name: %s\n", FILE_PHOTO2);
+    File file2 = SPIFFS.open(FILE_PHOTO2, FILE_WRITE);
 
     // Insert the data in the photo file
-    if (!file) {
+    if (!file || !file2) {
       Serial.println("Failed to open file in writing mode");
     }
     else {
       file.write(fb->buf, fb->len); // payload (image), payload length
       Serial.print("The picture has been saved in ");
       Serial.print(FILE_PHOTO);
+      Serial.print(FILE_PHOTO2);
       Serial.print(" - Size: ");
       Serial.print(file.size());
       Serial.println(" bytes");
