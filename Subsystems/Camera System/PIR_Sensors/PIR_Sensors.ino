@@ -22,6 +22,11 @@
 #include "driver/rtc_io.h"
 #include <EEPROM.h>            // read and write from flash memory
 #include "DHT.h"
+
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include "Base64.h"
+
 // define the number of bytes you want to access
 #define EEPROM_SIZE 1
 #define DHTPIN 14
@@ -29,6 +34,16 @@
 
 DHT dht(DHTPIN, DHTTYPE);
  
+// Enter your WiFi ssid and password
+const char* ssid     = "SnackAttack";   //your network SSID
+const char* password = "0794404715";   //your network password
+//For google drive stuff
+String myScript = "/macros/s/AKfycbxKzp6hFL-gaOCHASBMZEy6VeccC6YSwNPRKMYWBp5BjbiSy82z7A7KyL2OyEJI-Qxc/exec";    //Create your Google Apps Script and replace the "myScript" path.
+String myLineNotifyToken = "myToken=**********";    //Line Notify Token. You can set the value of xxxxxxxxxx empty if you don't want to send picture to Linenotify.
+String myFoldername = "&myFoldername=ESP32-CAM";
+String myFilename = "&myFilename=ESP32-CAM.jpg";
+String myImage = "&myFile=";
+
 RTC_DATA_ATTR int bootCount = 0;
 
 // Pin definition for CAMERA_MODEL_AI_THINKER
@@ -50,10 +65,37 @@ RTC_DATA_ATTR int bootCount = 0;
 #define PCLK_GPIO_NUM     22
  
 int pictureNumber = 0;
-  
+camera_fb_t * fb = NULL;
+
 void setup() {
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
   Serial.begin(115200);
+  delay(10);
+  
+  WiFi.mode(WIFI_STA);
+
+  Serial.println("");
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);  
+  
+  long int StartTime=millis();
+  while (WiFi.status() != WL_CONNECTED) 
+  {
+    delay(500);
+    if ((StartTime+10000) < millis()) break;
+  } 
+
+  Serial.println("");
+  Serial.println("STAIP address: ");
+  Serial.println(WiFi.localIP());
+    
+  Serial.println("");
+
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("Reset");
+  }
+  
   dht.begin();
 
   float h = dht.readHumidity();
@@ -127,8 +169,6 @@ void setup() {
     Serial.println("No SD Card attached");
     return;
   }
-   
-  camera_fb_t * fb = NULL;
  
   // Take Picture with Camera
   fb = esp_camera_fb_get();  
@@ -137,13 +177,15 @@ void setup() {
     return;
   }
 
+
+
   // initialize EEPROM with predefined size
   EEPROM.begin(EEPROM_SIZE);
   pictureNumber = EEPROM.read(0) + 1;
  
   // Path where new picture will be saved in SD Card
   String path = "/picture" + String(pictureNumber) +"_H"+h+"_T"+t+"_HIC"+hic+".jpg";
- 
+  SendCapturedImage(path);
   fs::FS &fs = SD_MMC;
   Serial.printf("Picture file name: %s\n", path.c_str());
  
@@ -173,8 +215,114 @@ void setup() {
   delay(1000);
   esp_deep_sleep_start();
   Serial.println("This will never be printed");
+
 } 
- 
+
 void loop() {
  
 }
+
+String SendCapturedImage(String path) {
+  const char* myDomain = "script.google.com";
+  String getAll="", getBody = "";
+  
+  Serial.println("Connect to " + String(myDomain));
+  WiFiClientSecure client_tcp;
+  client_tcp.setInsecure();   //run version 1.0.5 or above
+  
+  if (client_tcp.connect(myDomain, 443)) {
+    Serial.println("Connection successful");
+    
+    char *input = (char *)fb->buf;
+    char output[base64_enc_len(3)];
+    String imageFile = "data:image/jpeg;base64,";
+    for (int i=0;i<fb->len;i++) {
+      base64_encode(output, (input++), 3);
+      if (i%3==0) imageFile += urlencode(String(output));
+    }
+    String Data = myLineNotifyToken+myFoldername+myFilename+myImage;
+    
+    client_tcp.println("POST " + myScript + " HTTP/1.1");
+    client_tcp.println("Host: " + String(myDomain));
+    client_tcp.println("Content-Length: " + String(Data.length()+imageFile.length()));
+    client_tcp.println("Content-Type: application/x-www-form-urlencoded");
+    client_tcp.println("Connection: keep-alive");
+    client_tcp.println();
+    
+    client_tcp.print(Data);
+    int Index;
+    for (Index = 0; Index < imageFile.length(); Index = Index+1000) {
+      client_tcp.print(imageFile.substring(Index, Index+1000));
+    }
+    esp_camera_fb_return(fb);
+    
+    int waitTime = 10000;   // timeout 10 seconds
+    long startTime = millis();
+    boolean state = false;
+    
+    while ((startTime + waitTime) > millis())
+    {
+      Serial.print(".");
+      delay(100);      
+      while (client_tcp.available()) 
+      {
+          char c = client_tcp.read();
+          if (state==true) getBody += String(c);        
+          if (c == '\n') 
+          {
+            if (getAll.length()==0) state=true; 
+            getAll = "";
+          } 
+          else if (c != '\r')
+            getAll += String(c);
+          startTime = millis();
+          Serial.println("available");
+       }
+       if (getBody.length()>0) break;
+    }
+    client_tcp.stop();
+    Serial.println(getBody);
+  }
+  else {
+    getBody="Connected to " + String(myDomain) + " failed.";
+    Serial.println("Connected to " + String(myDomain) + " failed.");
+  }
+  
+  return getBody;
+}
+
+
+String urlencode(String str)
+{
+    String encodedString="";
+    char c;
+    char code0;
+    char code1;
+    char code2;
+    for (int i =0; i < str.length(); i++){
+      c=str.charAt(i);
+      if (c == ' '){
+        encodedString+= '+';
+      } else if (isalnum(c)){
+        encodedString+=c;
+      } else{
+        code1=(c & 0xf)+'0';
+        if ((c & 0xf) >9){
+            code1=(c & 0xf) - 10 + 'A';
+        }
+        c=(c>>4)&0xf;
+        code0=c+'0';
+        if (c > 9){
+            code0=c - 10 + 'A';
+        }
+        code2='\0';
+        encodedString+='%';
+        encodedString+=code0;
+        encodedString+=code1;
+        //encodedString+=code2;
+      }
+      yield();
+    }
+    return encodedString;
+}
+
