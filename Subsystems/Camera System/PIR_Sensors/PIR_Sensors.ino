@@ -166,7 +166,7 @@ void setup() {
   digitalWrite(4, LOW);
   rtc_gpio_hold_en(GPIO_NUM_4);
 
-  esp_sleep_enable_ext0_wakeup(GPIO_NUM_13, 0);
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_13, 0); // PIR sensor is connected to pin 13
  
   Serial.println("Going to sleep now");
   delay(1000);
