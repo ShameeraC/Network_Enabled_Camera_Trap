@@ -34,11 +34,10 @@ DHT dht(DHTPIN, DHTTYPE);
 
 RTC_DATA_ATTR int bootCount = 0;
 
-const char* ssid     = "Stefan’s iPhone";   //your network SSID
-const char* password = "Stefan2006";   //your network password
+const char* ssid     = "Stefan’s iPhone";
+const char* password = "Stefan2006";
 const char* myDomain = "script.google.com";
 String myScript = "/macros/s/AKfycbyBse9bKyZBZD_zP8_tjoMgUQwhara9a6n1UdGlvQdcggqMWA0mFggz7TWf28bApHdc/exec"; 
-//String myScript = "/macros/s/AKfycbx1Y4pBf6sd4Oc9xfrsNbGyV6zFIP1OAJcofVFs_MNviCyilwyY2PWxLtlGkb0xkOf8/exec";    //Replace with your own url
 String mimeType = "&mimetype=image/jpeg";
 String myImage = "&data=";
 
@@ -71,6 +70,7 @@ void setup()
   Serial.begin(115200);
   delay(10);
 
+  // start temperature and humidity sensor and read from it
   dht.begin();
   float h = dht.readHumidity();
   float t = dht.readTemperature();
@@ -119,7 +119,7 @@ void setup()
   }
 
   camera_fb_t * fb = NULL;
-  fb = esp_camera_fb_get();  
+  fb = esp_camera_fb_get();  // take a photo and store its address in fb
   if(!fb) {
     Serial.println("Camera capture failed");
     delay(1000);
@@ -163,7 +163,7 @@ void setup()
     EEPROM.commit();
   }
   file.close();
-  esp_camera_fb_return(fb);
+  esp_camera_fb_return(fb); // return frame buffer for further use
 
   WiFi.mode(WIFI_STA);
 
