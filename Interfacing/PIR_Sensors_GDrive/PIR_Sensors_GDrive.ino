@@ -1,3 +1,17 @@
+/*
+  Stefan Friedrich and Shameera Cassim
+  Camera Trap with SD card and Google Drive Functionality
+
+  The scipt below contains code from the following online coding guides and tutorials:
+  https://randomnerdtutorials.com/esp32-cam-pir-motion-detector-photo-capture/
+  https://blog.pishop.co.za/how-to-take-photos-and-upload-it-to-google-drive-using-esp32-cam/
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files.
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+*/ 
+
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include "soc/soc.h"

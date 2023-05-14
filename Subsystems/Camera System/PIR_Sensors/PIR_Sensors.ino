@@ -1,17 +1,15 @@
-/*********
-  Rui Santos
-  Complete project details at https://RandomNerdTutorials.com/esp32-cam-pir-motion-detector-photo-capture/
- 
-  IMPORTANT!!!
-   - Select Board "AI Thinker ESP32-CAM"
-   - GPIO 0 must be connected to GND to upload a sketch
-   - After connecting GPIO 0 to GND, press the ESP32-CAM on-board RESET button to put your board in flashing mode
- 
+/*
+  Stefan Friedrich
+  Camera Trap with SD card and Google Drive Functionality
+
+  The scipt below contains code from the following online coding guide and tutorial:
+  https://randomnerdtutorials.com/esp32-cam-pir-motion-detector-photo-capture/
+
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files.
   The above copyright notice and this permission notice shall be included in all
   copies or substantial portions of the Software.
-*********/
+*/ 
  
 #include "esp_camera.h"
 #include "Arduino.h"
