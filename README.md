@@ -1,15 +1,21 @@
 # Network-Enabled Camera Trap
-This project deals with improving exisitng research equipment for ornithologists. One of the major concerns faced by researchers studying eagles in the Kalahari includes the inability to confirm whether camera traps are working once they are set up in a tree. He also has no way of telling if the camera trap has moved from its set position due to issues with mounting. They also cannot confirm whether the camera is positioned correctly or that it is on. This means that months of research can be missed due to simple errors.
+This project deals with improving existing research equipment for ornithologists. One of the major concerns faced by researchers studying red-winged starlings at the University of Cape Town and its surrounding area, is that they are lacking the necessary funds and manpower to monitor their feeding and nesting behaviour. To address this issue, our team has decided to design a network-enabled camera trap.
+
+The camera trap uses a PIR sensor to trigger a photo being taken. The photo is then saved to an  SD card, along with environmental data such as temperature and humidity measured by the camera trap's sensor. Afterwards, the camera trap uploads the saved image to Google Drive as well.
 
 This repository details the design, testing, documentation and implementation of a network-enabled camera trap aimed at solving these problems completed by [Shameera Cassim](https://github.com/ShameeraC), [Thato Khoabane](https://github.com/kingtysen1969), [Litha Nohashe](https://github.com/lithanohasheUCT) and [Stefan Friedrich](https://github.com/stefanfriedric).
 
 ## File Structure
 ### Subsystems
 This folder includes 4 subfolders - one for each submodule in the system. These are:
-Camera System;
-Communication;
-Mounting and Housing; and
-Power Management.
+ * Camera System
+    * By Stefan Friedrich
+ * Communication
+    * By Shameera Cassim
+ * Mounting and Housing
+    * By Litha Nohashe
+ * Power Management
+    * By Thato Khaboane
 
 ### Documentation
 Contains all relevant documentation for the project including project submissions.
