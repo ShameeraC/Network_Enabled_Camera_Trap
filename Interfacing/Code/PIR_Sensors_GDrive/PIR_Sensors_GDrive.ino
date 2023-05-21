@@ -34,8 +34,9 @@ DHT dht(DHTPIN, DHTTYPE);
 
 RTC_DATA_ATTR int bootCount = 0;
 
-const char* ssid     = "Shams iPhone";
-const char* password = "123456sc";
+// Replace with your network credentials and your script deployment ID
+const char* ssid     = "*******";
+const char* password = "*******";
 const char* myDomain = "script.google.com";
 String myScript = "/macros/s/AKfycbwtS9wALNS8kEF1cMP7vp11rMfEVP7DPHptMQojy9lxJ4RYTJPeGJn3B4H9so6gmz28/exec"; 
 String mimeType = "&mimetype=image/jpeg";

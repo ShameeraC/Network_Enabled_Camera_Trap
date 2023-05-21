@@ -1,8 +1,9 @@
-
+// Based on the tutorial and code written by Engr Fahad
+// Tutorial available at https://www.electroniclinic.com/esp32-cam-send-images-to-google-drive-iot-security-camera/#espcam_code
 
 // Enter your WiFi ssid and password
-const char* ssid     = "SnackAttack";   //your network SSID
-const char* password = "0794404715";   //your network password
+const char* ssid     = "*******";   //your network SSID
+const char* password = "*******";   //your network password
 
 String myScript = "/macros/s/AKfycbyPzhdAkquxeeCxi1c7D6rrfQP2ZVNhivGEVPOXzouvcHP3bdN3A_OP5Zd3kBbiYOFO/exec";    //Create your Google Apps Script and replace the "myScript" path.
 String myLineNotifyToken = "myToken=**********";    //Line Notify Token. You can set the value of xxxxxxxxxx empty if you don't want to send picture to Linenotify.
@@ -69,28 +70,8 @@ void setup()
 
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("Reset");
-    
-    // ledcAttachPin(4, 3);
-    // ledcSetup(3, 5000, 8);
-    // ledcWrite(3,10);
-    // delay(200);
-    // ledcWrite(3,0);
-    // delay(200);    
-    // ledcDetachPin(3);
-        
     delay(1000);
     ESP.restart();
-  }
-  else {
-    // ledcAttachPin(4, 3);
-    // ledcSetup(3, 5000, 8);
-    for (int i=0;i<5;i++) {
-      // ledcWrite(3,10);
-      // delay(200);
-      // ledcWrite(3,0);
-      // delay(200);    
-    }
-    // ledcDetachPin(3);      
   }
 
   camera_config_t config;
@@ -114,6 +95,7 @@ void setup()
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
   config.pixel_format = PIXFORMAT_JPEG;
+  
   //init with high specs to pre-allocate larger buffers
   if(psramFound()){
     config.frame_size = FRAMESIZE_UXGA;
