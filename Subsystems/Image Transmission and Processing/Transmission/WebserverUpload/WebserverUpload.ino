@@ -1,4 +1,12 @@
 /*********
+  
+  This code was slightly altered for use on a network enabled camera trap developed for EEE4113F at UCT by Shameera Cassim
+
+  It is based on the project completed by Rui Santos available at https://RandomNerdTutorials.com/esp32-cam-take-photo-display-web-server/
+
+  **********/
+
+  /********
   Rui Santos
   Complete project details at https://RandomNerdTutorials.com/esp32-cam-take-photo-display-web-server/
   
