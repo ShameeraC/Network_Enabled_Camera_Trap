@@ -10,7 +10,7 @@ This repository details the design, testing, documentation and implementation of
 This folder includes 4 subfolders - one for each submodule in the system. These are:
  * Camera System
     * By Stefan Friedrich
- * Communication
+ * Image Transmission and Processing
     * By Shameera Cassim
  * Mounting and Housing
     * By Litha Nohashe
